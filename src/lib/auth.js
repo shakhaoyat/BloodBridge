@@ -16,6 +16,18 @@ export const auth = betterAuth({
             enabled: true,
       },
 
+      user: {
+            additionalFields: {
+                  role: { defaultValue: 'Donor' },
+                  status: { defaultValue: 'Active' },
+                  bloodGroup: { type: 'string', required: false },
+                  district: { type: 'string', required: false },
+                  upazila: { type: 'string', required: false },
+                  phone: { type: 'string', required: false },
+                  avatarUrl: { type: 'string', required: false },
+            },
+      },
+
       socialProviders: {
             google: {
                   clientId: process.env.GOOGLE_CLIENT_ID,
