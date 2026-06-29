@@ -6,6 +6,7 @@ import { FaFacebook } from "react-icons/fa";
 import { BsInstagram, BsTwitter } from "react-icons/bs";
 import { LiaLinkedin } from "react-icons/lia";
 
+
 const Footer = () => {
       return (
             <footer className="mt-16 border-t bg-background container mx-auto px-4">
