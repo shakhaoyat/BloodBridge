@@ -1,9 +1,10 @@
+import SearchDonorPage from '@/components/SearchDonorPage';
 import React from 'react';
 
 const page = () => {
       return (
             <div>
-                  search-donor
+                  <SearchDonorPage />
             </div>
       );
 };

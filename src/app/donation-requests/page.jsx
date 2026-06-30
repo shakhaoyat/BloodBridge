@@ -1,9 +1,10 @@
+import PublicDonationRequests from '@/components/PublicDonationRequests';
 import React from 'react';
 
 const page = () => {
       return (
             <div>
-                  donation requests
+                   <PublicDonationRequests />
             </div>
       );
 };
