@@ -43,9 +43,8 @@ function ActionMenu({ user, onAction }) {
                   onAction(item.key);
                   setOpen(false);
                 }}
-                className={`flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm transition-colors ${
-                  item.danger ? 'text-red-400 hover:bg-red-500/10' : 'text-slate-300 hover:bg-white/[0.05] hover:text-white'
-                }`}
+                className={`flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm transition-colors ${item.danger ? 'text-red-400 hover:bg-red-500/10' : 'text-slate-300 hover:bg-white/[0.05] hover:text-white'
+                  }`}
               >
                 <Icon size={14} />
                 {item.label}
@@ -93,25 +92,34 @@ export default function AllUsersTable() {
       key === 'block'
         ? { status: 'Blocked' }
         : key === 'unblock'
-        ? { status: 'Active' }
-        : key === 'make-volunteer'
-        ? { role: 'volunteer' }
-        : { role: 'admin' };
+          ? { status: 'Active' }
+          : key === 'make-volunteer'
+            ? { role: 'volunteer' }
+            : { role: 'admin' };
 
     // optimistic update
     setUsers((prev) => prev.map((u) => (u._id === id ? { ...u, ...patch } : u)));
 
     try {
-      const res = await fetch(`/api/users/${id}`, {
+      const res = await fetch(`/api/users/${id}/admin`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(patch),
       });
-      if (!res.ok) throw new Error('Update failed');
+      if (!res.ok) {
+        let message = `Update failed (${res.status})`;
+        try {
+          const data = await res.json();
+          message = data?.message || message;
+        } catch {
+          message = res.statusText || message;
+        }
+        throw new Error(message);
+      }
       toast.success('User updated.');
     } catch (e) {
       console.error(e);
-      toast.error('Failed to update user. Reverting.');
+      toast.error(e.message || 'Failed to update user. Reverting.');
       loadUsers();
     }
   };
@@ -129,11 +137,10 @@ export default function AllUsersTable() {
             key={s}
             type="button"
             onClick={() => setStatusFilter(s)}
-            className={`rounded-full px-4 py-1.5 text-xs font-semibold capitalize transition-all ${
-              statusFilter === s
+            className={`rounded-full px-4 py-1.5 text-xs font-semibold capitalize transition-all ${statusFilter === s
                 ? 'bg-gradient-to-r from-red-600 to-rose-500 text-white shadow-[0_0_14px_rgba(220,38,38,0.3)]'
                 : 'border border-white/[0.08] bg-white/[0.03] text-slate-400 hover:text-white hover:bg-white/[0.06]'
-            }`}
+              }`}
           >
             {s}
           </button>
@@ -188,11 +195,10 @@ export default function AllUsersTable() {
                       </td>
                       <td className="px-5 py-3.5">
                         <span
-                          className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${
-                            u.status === 'Active'
+                          className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${u.status === 'Active'
                               ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                               : 'bg-red-500/10 text-red-400 border-red-500/20'
-                          }`}
+                            }`}
                         >
                           <span className="h-1.5 w-1.5 rounded-full bg-current" />
                           {u.status}

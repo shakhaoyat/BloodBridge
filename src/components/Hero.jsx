@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const HomePage = () => {
       return (
-            <main className="bg-gradient-to-br from-red-50 via-white to-rose-100">
+            <main className="bg-[#070D18]-to-br text-white from-red-50 via-white to-rose-100">
                   {/* Hero Section */}
                   <section className="container mx-auto flex min-h-[90vh] items-center px-6 py-16">
                         <div className="grid items-center gap-12 lg:grid-cols-2">

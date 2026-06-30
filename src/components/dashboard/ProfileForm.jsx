@@ -71,7 +71,7 @@ export default function ProfileForm({ user, onSave }) {
       setEditing(false);
     } catch (err) {
       console.error(err);
-      toast.error('Failed to update profile.');
+      toast.error(err?.message || 'Failed to update profile.');
     } finally {
       setSaving(false);
     }

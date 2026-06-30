@@ -229,25 +229,28 @@ const RegisterPage = () => {
             'w-full appearance-none pl-4 pr-10 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl text-white focus:outline-none focus:border-red-500/50 focus:bg-red-500/[0.02] focus:ring-4 focus:ring-red-500/10 transition-all duration-300 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed';
 
       return (
-
-
-
-
-            <div className="w-full lg:w-7/12 p-8 sm:p-12 lg:p-14 flex flex-col justify-center bg-[#070D18]/80">
-                  <div className="mb-8">
-                        <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">Create Account</h2>
-                        <p className="text-slate-400 text-sm">Fill in the details to register as a donor.</p>
+            <div className="min-h-screen bg-[#070D18]">
+                  <div className="pointer-events-none fixed inset-0 overflow-hidden">
+                        <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-red-600/10 blur-3xl" />
+                        <div className="absolute bottom-0 left-1/4 h-72 w-72 rounded-full bg-rose-500/5 blur-3xl" />
                   </div>
 
-                  <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="relative mx-auto max-w-xl px-4 sm:px-6 py-12 lg:py-16">
+                        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 sm:p-8">
+                              <div className="mb-8">
+                                    <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">Create Account</h2>
+                                    <p className="text-slate-400 text-sm">Fill in the details to register as a donor.</p>
+                              </div>
 
-                        {/* Avatar */}
-                        <div>
-                              <label className={labelCls}>
-                                    Avatar <span className="text-slate-600 font-normal normal-case">(optional)</span>
-                              </label>
-                              <div className="flex items-center gap-4">
-                                    <div className="relative w-16 h-16 rounded-full border-2 border-dashed border-white/20 bg-white/[0.03] flex items-center justify-center overflow-hidden group cursor-pointer hover:border-red-500/50 transition-colors">
+                              <form onSubmit={handleSubmit} className="space-y-5">
+
+                                    {/* Avatar */}
+                                    <div>
+                                          <label className={labelCls}>
+                                                Avatar <span className="text-slate-600 font-normal normal-case">(optional)</span>
+                                          </label>
+                                          <div className="flex items-center gap-4">
+                                                <div className="relative w-16 h-16 rounded-full border-2 border-dashed border-white/20 bg-white/[0.03] flex items-center justify-center overflow-hidden group cursor-pointer hover:border-red-500/50 transition-colors">
                                           {avatarPreview ? (
                                                 <img src={avatarPreview} alt="Preview" className="w-full h-full object-cover" />
                                           ) : (
@@ -530,6 +533,8 @@ const RegisterPage = () => {
                               Sign in here
                         </Link>
                   </p>
+                        </div>
+                  </div>
             </div>
 
       );

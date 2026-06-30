@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Search, MapPin, Droplet, Mail, ChevronDown, UserRound } from 'lucide-react';
+import Link from 'next/link';
+import { Search, MapPin, Droplet, Mail, ChevronDown, UserRound, ArrowLeft } from 'lucide-react';
 
 const labelCls = 'block text-xs font-semibold text-slate-400 mb-2 ml-1 tracking-wide uppercase';
 const selectCls =
@@ -139,6 +140,13 @@ export default function SearchDonorPage() {
         <div className="mb-10 max-w-2xl">
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-3">Search Donors</h1>
           <p className="text-slate-400">Find a registered blood donor or volunteer near you by blood group and location.</p>
+        <Link
+            href="/"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-all duration-300 hover:border-red-500/40 hover:bg-red-500 hover:shadow-lg hover:shadow-red-500/20"
+          >
+            <ArrowLeft size={18} />
+            Return to Home
+          </Link>
         </div>
 
         {/* Search form */}

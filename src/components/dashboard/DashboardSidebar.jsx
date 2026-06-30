@@ -14,7 +14,9 @@ import {
   X,
   LogOut,
   HeartHandshake,
+  ArrowLeft,
 } from 'lucide-react';
+import Image from 'next/image';
 
 // Centralized nav config per role. Keep it here so dashboard pages
 // don't have to know about role logic individually.
@@ -50,11 +52,10 @@ function NavLink({ item, active, onClick }) {
     <Link
       href={item.href}
       onClick={onClick}
-      className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
-        active
-          ? 'bg-gradient-to-r from-red-600/20 to-rose-500/10 text-white border border-red-500/20'
-          : 'text-slate-400 hover:text-white hover:bg-white/[0.04] border border-transparent'
-      }`}
+      className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${active
+        ? 'bg-gradient-to-r from-red-600/20 to-rose-500/10 text-white border border-red-500/20'
+        : 'text-slate-400 hover:text-white hover:bg-white/[0.04] border border-transparent'
+        }`}
     >
       {active && (
         <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-gradient-to-b from-red-500 to-rose-400" />
@@ -77,10 +78,20 @@ export default function DashboardSidebar({ role = 'donor', userName = '', userAv
     <div className="flex h-full flex-col bg-[#070D18] border-r border-white/[0.06]">
       {/* Brand */}
       <div className="flex items-center gap-2.5 px-6 py-6 border-b border-white/[0.06]">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 to-rose-500 shadow-[0_0_20px_rgba(220,38,38,0.3)]">
-          <HeartHandshake size={18} className="text-white" />
-        </div>
-        <span className="text-lg font-bold tracking-tight text-white">BloodBridge</span>
+
+        <Link href="/" className="inline-block">
+          <div className="flex items-center text-white">
+            <Image
+              src="/logo.png"
+              alt="BloodBridge Logo"
+              width={180}
+              height={50}
+              className="h-12 w-auto"
+            />
+            <h1 className="text-xl font-bold"><span className="text-red-700">Blood</span>Bridge</h1>
+          </div>
+        </Link>
+
       </div>
 
       {/* Nav */}
@@ -93,6 +104,14 @@ export default function DashboardSidebar({ role = 'donor', userName = '', userAv
             onClick={() => setMobileOpen(false)}
           />
         ))}
+
+        <Link
+          href="/"
+          className="w-full mt-50 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-red-600 transition"
+        >
+          <ArrowLeft size={18} />
+          Return to Home
+        </Link>
       </nav>
 
       {/* User footer */}
@@ -133,7 +152,18 @@ export default function DashboardSidebar({ role = 'donor', userName = '', userAv
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-red-600 to-rose-500">
             <HeartHandshake size={16} className="text-white" />
           </div>
-          <span className="font-bold text-white">BloodBridge</span>
+          <Link href="/" className="inline-block">
+            <div className="flex items-center">
+              <Image
+                src="/logo.png"
+                alt="BloodBridge Logo"
+                width={180}
+                height={50}
+                className="h-12 w-auto"
+              />
+              <h1 className="text-xl font-bold"><span className="text-red-700">Blood</span>Bridge</h1>
+            </div>
+          </Link>
         </div>
         <button
           type="button"

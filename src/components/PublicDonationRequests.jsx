@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Droplet, MapPin, Calendar, Clock, Eye, Search } from 'lucide-react';
+import { Droplet, MapPin, Calendar, Clock, Eye, Search, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import Link from 'next/link';
 
 function RequestCard({ request, onView }) {
   return (
@@ -108,9 +109,19 @@ export default function PublicDonationRequests() {
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-3">
             Blood Donation Requests
           </h1>
+
           <p className="text-slate-400">
-            These are pending requests from people who need blood right now. Find one near you and help save a life.
+            These are pending requests from people who need blood right now.
+            Find one near you and help save a life.
           </p>
+
+          <Link
+            href="/"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-all duration-300 hover:border-red-500/40 hover:bg-red-500 hover:shadow-lg hover:shadow-red-500/20"
+          >
+            <ArrowLeft size={18} />
+            Return to Home
+          </Link>
         </div>
 
         {/* Search */}
@@ -146,6 +157,10 @@ export default function PublicDonationRequests() {
           </div>
         )}
       </div>
+
+      F
+
     </div>
+
   );
 }
