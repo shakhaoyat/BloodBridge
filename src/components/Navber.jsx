@@ -89,7 +89,7 @@ const Navbar = () => {
                                           <Link href="/donation-requests">Donation Requests</Link>
                                     </li>
                                     <li>
-                                          <Link href="/search-donor">Search Donor</Link>
+                                          <Link href="/founding">Donate Funds</Link>
                                     </li>
                               </ul>
                               {!user && (
@@ -185,7 +185,7 @@ const Navbar = () => {
                                                 <Link href="/donation-requests">Donation Requests</Link>
                                           </li>
                                           <li>
-                                                <Link href="/search-donor">Search Donor</Link>
+                                                <Link href="/founding">Donate Funds</Link>
                                           </li>
                                           <li className="mt-4 flex flex-col gap-2 border-t border-separator pt-4">
                                                 <Link href="/login" className="block py-2">
