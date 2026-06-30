@@ -6,7 +6,7 @@ let stripePromise;
 
 export function getStripe() {
   if (!stripePromise) {
-    stripePromise = loadStripe(process.env.N_PC_S_PUBLISHABLE_KEY);
+    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
   }
   return stripePromise;
 }
