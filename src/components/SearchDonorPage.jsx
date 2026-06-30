@@ -1,11 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, MapPin, Droplet, Mail, ChevronDown, UserRound } from 'lucide-react';
 
 const labelCls = 'block text-xs font-semibold text-slate-400 mb-2 ml-1 tracking-wide uppercase';
-const inputCls =
-  'w-full pl-11 pr-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-red-500/50 focus:bg-red-500/[0.02] focus:ring-4 focus:ring-red-500/10 transition-all duration-300';
 const selectCls =
   'w-full appearance-none pl-4 pr-10 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl text-white focus:outline-none focus:border-red-500/50 focus:bg-red-500/[0.02] focus:ring-4 focus:ring-red-500/10 transition-all duration-300 cursor-pointer disabled:opacity-40';
 
@@ -45,15 +43,19 @@ function DonorCard({ donor }) {
 
 /**
  * Route: /search-donor (public)
- * Lets visitors search registered, active donors by name, blood group,
- * district, and upazila. Reads from /api/users (your Express endpoint),
- * client-side filtered to role === 'Donor' && status === 'Active'.
+ *
+ * Search form: blood group, district, upazila, search button.
+ * No donor data is shown by default — results only appear after the
+ * visitor fills the form and clicks "Search". Reads from /api/donors
+ * (Express endpoint), which filters the "users" collection server-side
+ * to role in [Donor, Volunteer] && status === Active.
  */
 export default function SearchDonorPage() {
   const [donors, setDonors] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
-  const [name, setName] = useState('');
   const [bloodGroup, setBloodGroup] = useState('');
   const [district, setDistrict] = useState('');
   const [upazila, setUpazila] = useState('');
@@ -65,26 +67,7 @@ export default function SearchDonorPage() {
 
   const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
-  // Load donors (active only — blocked donors shouldn't surface in public search)
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        const res = await fetch('/api/users?status=active');
-        const data = await res.json();
-        if (active) setDonors(Array.isArray(data) ? data.filter((u) => u.role === 'Donor') : []);
-      } catch (e) {
-        console.error('Failed to load donors:', e);
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  // Load district/upazila reference data
+  // Load district/upazila reference data (needed to populate the selects)
   useEffect(() => {
     async function loadLocation() {
       try {
@@ -117,18 +100,33 @@ export default function SearchDonorPage() {
     setUpazila('');
   }, [district, districtsInfo, upazilasInfo]);
 
-  const results = useMemo(() => {
-    const q = name.trim().toLowerCase();
-    return donors.filter((d) => {
-      if (q && !d.name?.toLowerCase().includes(q)) return false;
-      if (bloodGroup && d.bloodGroup !== bloodGroup) return false;
-      if (district && d.district !== district) return false;
-      if (upazila && d.upazila !== upazila) return false;
-      return true;
-    });
-  }, [donors, name, bloodGroup, district, upazila]);
+  async function handleSearch(e) {
+    e.preventDefault();
+    setLoading(true);
+    setLoadError(false);
+    setHasSearched(true);
 
-  const hasActiveFilters = name || bloodGroup || district || upazila;
+    try {
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || '';
+      const params = new URLSearchParams();
+      if (bloodGroup) params.set('bloodGroup', bloodGroup);
+      if (district) params.set('district', district);
+      if (upazila) params.set('upazila', upazila);
+
+      const res = await fetch(`${apiBase}/api/donors?${params.toString()}`);
+      if (!res.ok) {
+        throw new Error(`Request failed with status ${res.status}`);
+      }
+      const data = await res.json();
+      setDonors(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Failed to search donors:', err);
+      setDonors([]);
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#070D18]">
@@ -140,26 +138,12 @@ export default function SearchDonorPage() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 py-12 lg:py-16">
         <div className="mb-10 max-w-2xl">
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-3">Search Donors</h1>
-          <p className="text-slate-400">Find a registered blood donor near you by name, blood group, or location.</p>
+          <p className="text-slate-400">Find a registered blood donor or volunteer near you by blood group and location.</p>
         </div>
 
-        {/* Filters */}
-        <div className="mb-10 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 sm:p-6">
+        {/* Search form */}
+        <form onSubmit={handleSearch} className="mb-10 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 sm:p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-              <label className={labelCls}>Name</label>
-              <div className="relative">
-                <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Donor name"
-                  className={inputCls}
-                />
-              </div>
-            </div>
-
             <div>
               <label className={labelCls}>Blood Group</label>
               <div className="relative">
@@ -212,45 +196,46 @@ export default function SearchDonorPage() {
                 <ChevronDown size={15} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
               </div>
             </div>
+
+            <div className="flex items-end">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-br from-red-600 to-rose-500 text-white font-semibold shadow-[0_0_14px_rgba(220,38,38,0.25)] hover:brightness-110 transition-all duration-300 disabled:opacity-50"
+              >
+                <Search size={16} />
+                {loading ? 'Searching…' : 'Search'}
+              </button>
+            </div>
           </div>
+        </form>
 
-          {hasActiveFilters && (
-            <button
-              type="button"
-              onClick={() => {
-                setName('');
-                setBloodGroup('');
-                setDistrict('');
-                setUpazila('');
-              }}
-              className="mt-4 text-xs font-semibold text-red-400 hover:text-red-300 transition-colors"
-            >
-              Clear filters
-            </button>
-          )}
-        </div>
-
-        {/* Results */}
-        {loading ? (
+        {/* Results — nothing shown until a search has been performed */}
+        {!hasSearched ? null : loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="h-32 rounded-2xl border border-white/[0.06] bg-white/[0.02] animate-pulse" />
             ))}
           </div>
-        ) : results.length === 0 ? (
+        ) : loadError ? (
+          <div className="rounded-2xl border border-dashed border-red-500/30 bg-red-500/[0.03] px-6 py-16 text-center">
+            <UserRound size={28} className="mx-auto mb-3 text-red-500/60" />
+            <p className="text-slate-400">
+              Couldn&apos;t load donors. Check that the API server is running and reachable.
+            </p>
+          </div>
+        ) : donors.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-white/[0.1] bg-white/[0.02] px-6 py-16 text-center">
             <UserRound size={28} className="mx-auto mb-3 text-slate-600" />
-            <p className="text-slate-400">
-              {hasActiveFilters ? 'No donors match your search.' : 'No donors registered yet.'}
-            </p>
+            <p className="text-slate-400">No donors match your search.</p>
           </div>
         ) : (
           <>
             <p className="mb-4 text-sm text-slate-500">
-              {results.length} donor{results.length !== 1 ? 's' : ''} found
+              {donors.length} donor{donors.length !== 1 ? 's' : ''} found
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {results.map((donor) => (
+              {donors.map((donor) => (
                 <DonorCard key={donor._id} donor={donor} />
               ))}
             </div>
